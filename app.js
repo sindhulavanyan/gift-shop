@@ -192,3 +192,8 @@ function processPaymentSuccess(paymentData) {
     updateCartUI();
     document.getElementById("cart-drawer").classList.remove("active");
 }
+window.onload = function() {
+    if (typeof onGooglePayLoaded === 'function') {
+        onGooglePayLoaded();
+    }
+};
