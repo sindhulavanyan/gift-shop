@@ -4,205 +4,594 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>LAEON - The Present Gift Shop</title>
-    <!-- Google Fonts & Tailwind (Optional for layouts) -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <!-- Razorpay Checkout SDK -->
-    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
-    <!-- Lucide Icons -->
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Lucide Icons CDN -->
     <script src="https://unpkg.com/lucide@latest"></script>
-    
     <style>
         :root {
             --primary: #4F46E5;
             --primary-hover: #4338CA;
-            --bg: #F9FAFB;
-            --text: #111827;
+            --bg-main: #F9FAFB;
+            --bg-card: #FFFFFF;
+            --text-main: #111827;
             --text-muted: #6B7280;
-            --border: #E5E7EB;
+            --border-color: #E5E7EB;
+            --accent-warning: #F59E0B;
         }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
-        body { background-color: var(--bg); color: var(--text); }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
 
-        /* Loading Spinner */
-        .spinner-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #ffffff; display: flex; justify-content: center; align-items: center; z-index: 9999; transition: opacity 0.3s; }
-        .spinner { width: 45px; height: 45px; border: 4px solid var(--border); border-top: 4px solid var(--primary); border-radius: 50%; animation: spin 0.8s linear infinite; }
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        body {
+            background-color: var(--bg-main);
+            color: var(--text-main);
+            padding-bottom: 60px; /* Space for bottom nav on mobile */
+        }
 
-        /* Navigation Header */
-        header { background: white; border-bottom: 1px solid var(--border); sticky; top: 0; z-index: 100; position: sticky; }
-        .nav-container { max-width: 1200px; margin: 0 auto; padding: 15px 20px; display: flex; align-items: center; justify-content: space-between; gap: 20px; }
-        .logo { font-size: 24px; font-weight: 700; color: var(--primary); text-decoration: none; cursor: pointer; }
-        
-        .search-wrapper { flex: 1; max-width: 500px; position: relative; }
-        .search-wrapper input { width: 100%; padding: 10px 15px; border: 1px solid var(--border); border-radius: 8px; font-size: 14px; outline: none; }
-        .search-wrapper input:focus { border-color: var(--primary); }
+        /* --- HEADER & DESKTOP NAV --- */
+        header {
+            background: var(--bg-card);
+            border-bottom: 1px solid var(--border-color);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
 
-        .nav-actions { display: flex; align-items: center; gap: 15px; }
-        .nav-btn { background: none; border: none; cursor: pointer; position: relative; padding: 8px; color: var(--text); }
-        .badge { position: absolute; top: 0; right: 0; background: red; color: white; font-size: 10px; width: 18px; height: 18px; border-radius: 50%; display: flex; align-items: center; justify-content: center; }
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 15px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
 
-        /* Category Menu */
-        .categories-bar { background: white; border-bottom: 1px solid var(--border); overflow-x: auto; white-space: nowrap; }
-        .categories-container { max-width: 1200px; margin: 0 auto; padding: 10px 20px; display: flex; gap: 10px; }
-        .category-btn { background: #F3F4F6; border: none; padding: 8px 16px; border-radius: 20px; font-size: 13px; font-weight: 500; cursor: pointer; color: var(--text-muted); }
-        .category-btn.active { background: var(--primary); color: white; }
+        .logo {
+            font-size: 22px;
+            font-weight: 700;
+            color: var(--primary);
+            cursor: pointer;
+            letter-spacing: -0.5px;
+        }
 
-        /* Content Pages */
-        .page { display: none; max-width: 1200px; margin: 30px auto; padding: 0 20px; }
-        .page.active { display: block; }
+        .search-container {
+            flex: 0 1 400px;
+            position: relative;
+            margin: 0 20px;
+        }
 
-        /* Products Grid */
-        .products-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 30px; }
-        .product-card { background: white; border: 1px solid var(--border); border-radius: 12px; overflow: hidden; transition: transform 0.2s; }
-        .product-card:hover { transform: translateY(-4px); }
-        .img-container { height: 250px; background: #f3f3f3; overflow: hidden; }
-        .img-container img { width: 100%; height: 100%; object-fit: cover; }
-        .product-info { padding: 20px; }
-        .product-category { font-size: 12px; color: var(--text-muted); text-transform: uppercase; font-weight: 600; }
-        .product-info h3 { font-size: 16px; margin: 5px 0 10px; font-weight: 600; }
-        .product-price { font-size: 18px; font-weight: 700; color: var(--primary); }
-        .add-to-cart-btn { width: 100%; background: var(--primary); color: white; border: none; padding: 12px; border-radius: 8px; font-weight: 600; margin-top: 15px; cursor: pointer; }
+        .search-container input {
+            width: 100%;
+            padding: 10px 15px 10px 40px;
+            border: 1px solid var(--border-color);
+            border-radius: 30px;
+            background: #F3F4F6;
+            font-size: 14px;
+            outline: none;
+            transition: all 0.2s;
+        }
+
+        .search-container input:focus {
+            background: #fff;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+        }
+
+        .search-container i {
+            position: absolute;
+            left: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+            width: 18px;
+            height: 18px;
+        }
+
+        .nav-actions {
+            display: flex;
+            gap: 20px;
+        }
+
+        .icon-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: var(--text-main);
+            position: relative;
+            padding: 5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .icon-btn i {
+            width: 24px;
+            height: 24px;
+        }
+
+        .badge {
+            position: absolute;
+            top: -2px;
+            right: -2px;
+            background: var(--primary);
+            color: white;
+            font-size: 11px;
+            font-weight: 600;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* --- CATEGORIES BAR --- */
+        .categories-bar {
+            background: var(--bg-card);
+            border-bottom: 1px solid var(--border-color);
+            padding: 10px 0;
+            overflow-x: auto;
+            white-space: nowrap;
+            scrollbar-width: none; /* Firefox */
+        }
+        .categories-bar::-webkit-scrollbar { display: none; } /* Chrome/Safari */
+
+        .categories-inner {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            gap: 12px;
+        }
+
+        .category-btn {
+            background: #F3F4F6;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--text-main);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .category-btn.active, .category-btn:hover {
+            background: var(--primary);
+            color: white;
+        }
+
+        /* --- PAGES CONTENT --- */
+        .page {
+            display: none;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 30px 20px;
+        }
+
+        .page.active {
+            display: block;
+        }
+
+        /* --- PRODUCTS GRID --- */
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+            gap: 25px;
+        }
+
+        .product-card {
+            background: var(--bg-card);
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .product-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05);
+        }
+
+        .img-container {
+            width: 100%;
+            padding-top: 100%; /* 1:1 Aspect Ratio */
+            position: relative;
+            background: #F3F4F6;
+        }
+
+        .img-container img {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .product-info {
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
+        }
+
+        .product-category {
+            font-size: 11px;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .product-info h3 {
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--text-main);
+            margin-bottom: 8px;
+            line-height: 1.4;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            height: 42px;
+        }
+
+        .product-price {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--text-main);
+            margin-bottom: 12px;
+            margin-top: auto;
+        }
+
+        .add-to-cart-btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            width: 100%;
+            padding: 10px;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 13px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
         .add-to-cart-btn:hover { background: var(--primary-hover); }
 
-        /* Cart Drawer */
-        .cart-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); opacity: 0; pointer-events: none; transition: opacity 0.3s; z-index: 1000; }
+        /* --- SLIDE OUT CART DRAWER --- */
+        .cart-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.4);
+            z-index: 200;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s;
+        }
         .cart-overlay.active { opacity: 1; pointer-events: auto; }
-        .cart-drawer { position: fixed; top: 0; right: -400px; width: 100%; max-width: 400px; height: 100%; background: white; box-shadow: -5px 0 15px rgba(0,0,0,0.1); transition: right 0.3s; z-index: 1001; display: flex; flex-direction: column; }
+
+        .cart-drawer {
+            position: fixed;
+            top: 0;
+            right: -100%;
+            width: 100%;
+            max-width: 400px;
+            height: 100%;
+            background: var(--bg-card);
+            z-index: 201;
+            box-shadow: -5px 0 25px rgba(0,0,0,0.1);
+            display: flex;
+            flex-direction: column;
+            transition: right 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        }
         .cart-drawer.active { right: 0; }
-        .cart-header { padding: 20px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
-        #cart-items-container { flex: 1; overflow-y: auto; padding: 20px; }
-        .cart-item { display: flex; gap: 15px; margin-bottom: 20px; border-bottom: 1px solid var(--border); padding-bottom: 15px; }
-        .cart-item img { width: 70px; height: 70px; object-fit: cover; border-radius: 8px; }
-        .cart-item-details { flex: 1; }
-        .cart-item-details h4 { font-size: 14px; font-weight: 600; margin-bottom: 5px; }
-        .qty-controls { display: flex; align-items: center; gap: 12px; margin-top: 8px; }
-        .qty-controls button { background: #E5E7EB; border: none; width: 28px; height: 28px; border-radius: 6px; font-weight: bold; cursor: pointer; }
-        .cart-footer { padding: 20px; border-top: 1px solid var(--border); background: #F9FAFB; }
-        .total-row { display: flex; justify-content: space-between; font-size: 18px; font-weight: 700; margin-bottom: 15px; }
-        .checkout-btn { width: 100%; background: #10B981; color: white; border: none; padding: 14px; border-radius: 8px; font-weight: 600; cursor: pointer; font-size: 16px; }
 
-        /* Auth & Profile Styling */
-        .auth-box, .profile-container, .success-box { background: white; padding: 40px; border-radius: 16px; border: 1px solid var(--border); max-width: 450px; margin: 50px auto; text-align: center; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
-        .auth-box input { width: 100%; padding: 12px; border: 1px solid var(--border); border-radius: 8px; margin: 20px 0; font-size: 16px; text-align: center; }
-        .auth-box button, .profile-container button, .success-box button { width: 100%; padding: 12px; border: none; background: var(--primary); color: white; font-weight: 600; border-radius: 8px; cursor: pointer; margin-bottom: 10px; }
-        
-        .order-history-card { background: #F9FAFB; border: 1px solid var(--border); border-radius: 8px; padding: 15px; margin-top: 15px; text-align: left; }
-        .success-icon { font-size: 48px; color: #10B981; margin-bottom: 15px; }
+        .cart-header {
+            padding: 20px;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
 
-        /* Mobile Responsive */
-        @media (max-width: 768px) {
-            .nav-container { flex-wrap: wrap; padding: 10px; gap: 10px; }
-            .search-wrapper { order: 3; max-width: 100%; width: 100%; }
-            .products-grid { grid-template-columns: repeat(2, 1fr); gap: 15px; }
-            .img-container { height: 160px; }
-            .product-info { padding: 10px; }
-            .product-info h3 { font-size: 14px; }
+        .cart-items {
+            flex-grow: 1;
+            overflow-y: auto;
+            padding: 20px;
+        }
+
+        .cart-item {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .cart-item img {
+            width: 70px;
+            height: 70px;
+            object-fit: cover;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+        }
+
+        .cart-item-details { flex-grow: 1; }
+        .cart-item-details h4 { font-size: 14px; font-weight: 600; margin-bottom: 4px; }
+
+        .qty-controls {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-top: 8px;
+        }
+
+        .qty-controls button {
+            width: 26px;
+            height: 26px;
+            border: 1px solid var(--border-color);
+            background: #fff;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        .cart-footer {
+            padding: 20px;
+            border-top: 1px solid var(--border-color);
+            background: #F9FAFB;
+        }
+
+        .checkout-btn {
+            width: 100%;
+            background: var(--accent-warning);
+            color: white;
+            border: none;
+            padding: 14px;
+            border-radius: 8px;
+            font-size: 15px;
+            font-weight: 700;
+            cursor: pointer;
+            margin-top: 15px;
+            box-shadow: 0 4px 6px -1px rgba(245, 158, 11, 0.2);
+        }
+
+        /* --- AUTH & PROFILE PAGES --- */
+        .auth-card, .profile-card {
+            max-width: 400px;
+            margin: 40px auto;
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            text-align: center;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 6px;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            outline: none;
+        }
+
+        .form-group input:focus { border-color: var(--primary); }
+
+        .submit-btn {
+            width: 100%;
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 12px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .order-history-card {
+            background: #F3F4F6;
+            border-radius: 8px;
+            padding: 12px;
+            margin-top: 10px;
+            text-align: left;
+            border-left: 4px solid var(--accent-warning);
+        }
+
+        /* --- BOTTOM NAV FOR MOBILE --- */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background: white;
+            border-top: 1px solid var(--border-color);
+            display: none;
+            justify-content: space-around;
+            padding: 10px 0;
+            z-index: 150;
+        }
+
+        /* --- LOADER SPINNER --- */
+        .loader-overlay {
+            position: fixed;
+            top:0; left:0; width:100%; height:100%;
+            background: #fff; z-index: 999;
+            display: flex; justify-content: center; align-items: center;
+        }
+        .spinner {
+            width: 40px; height: 40px;
+            border: 4px solid #E5E7EB;
+            border-top-color: var(--primary);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        /* --- RESPONSIVE LOGIC --- */
+        @media(max-width: 768px) {
+            header { padding: 5px 0; }
+            .search-container { order: 3; flex: 1 0 100%; margin: 10px 0 0 0; }
+            .nav-container { flex-wrap: wrap; }
+            .nav-actions { display: none; } /* Handled by bottom nav */
+            .bottom-nav { display: flex; }
         }
     </style>
 </head>
 <body>
 
-    <!-- LOADING SPINNER -->
-    <div id="loader" class="spinner-overlay">
+    <!-- 1. LOADING SPINNER SCREEN -->
+    <div id="loader" class="loader-overlay">
         <div class="spinner"></div>
     </div>
 
-    <!-- HEADER / NAVBAR -->
+    <!-- 2. NAVBAR HEADER -->
     <header>
         <div class="nav-container">
             <div class="logo" onclick="showPage('home-page')">LAEON</div>
             
-            <div class="search-wrapper">
-                <input type="text" id="search-bar" placeholder="Search bottles, frames, t-shirts...">
+            <div class="search-container">
+                <i data-lucide="search"></i>
+                <input type="text" id="search-bar" placeholder="Search for Tumblers, Frames, Gifts...">
             </div>
-            
+
             <div class="nav-actions">
-                <button class="nav-btn" onclick="showPage('auth-page')" id="nav-profile-btn">
+                <button class="icon-btn" id="nav-profile-btn">
                     <i data-lucide="user"></i>
                 </button>
-                <button class="nav-btn" id="cart-btn">
+                <button class="icon-btn" id="cart-btn">
                     <i data-lucide="shopping-bag"></i>
-                    <span id="cart-count" class="badge">0</span>
+                    <span class="badge" id="cart-count">0</span>
                 </button>
             </div>
         </div>
     </header>
 
-    <!-- CATEGORIES MENU BAR -->
+    <!-- 3. HORIZONTAL CATEGORIES BAR -->
     <div class="categories-bar">
-        <div id="categories-menu" class="categories-container"></div>
+        <div class="categories-inner" id="categories-menu">
+            <!-- Dynamic Category Buttons inject here -->
+        </div>
     </div>
 
-    <!-- --- PAGES CONTROL --- -->
+    <!-- 4. HOME PAGE (PRODUCTS DISPLAY) -->
+    <main id="home-page" class="page active">
+        <h2 style="font-size: 20px; font-weight: 700; margin-bottom: 20px;">Trending Products</h2>
+        <div class="products-grid" id="products-container">
+            <!-- Dynamic Products inject here -->
+        </div>
+    </main>
 
-    <!-- 1. HOME PAGE (PRODUCTS DISPLAY) -->
-    <div id="home-page" class="page active">
-        <div id="products-container" class="products-grid"></div>
-    </div>
-
-    <!-- 2. LOGIN / SIGNUP PAGE -->
+    <!-- 5. AUTH / LOGIN PAGE -->
     <div id="auth-page" class="page">
-        <div class="auth-box">
-            <i data-lucide="lock" style="margin: 0 auto 10px; color: var(--primary);"></i>
-            <h2>Login / Signup</h2>
-            <p style="color: var(--text-muted); font-size: 14px; margin-top: 5px;">Enter your mobile number to connect</p>
-            <form onsubmit="handlePhoneLogin(event)">
-                <input type="tel" id="phone-input" placeholder="10 Digit Phone Number" required maxlength="10" pattern="[0-9]{10}">
-                <button type="submit">Verify & Log In</button>
+        <div class="auth-card">
+            <h2 style="margin-bottom: 10px;">Welcome to LAEON</h2>
+            <p style="color: var(--text-muted); font-size:14px; margin-bottom:20px;">Enter mobile number to Login / Create Account</p>
+            <form onsubmit="handlePhoneLogin(e)">
+                <div class="form-group">
+                    <label>Mobile Number</label>
+                    <input type="tel" id="phone-input" placeholder="Enter 10 digit number" maxlength="10" required>
+                </div>
+                <button type="submit" class="submit-btn" onclick="handlePhoneLogin(event)">Continue</button>
             </form>
-            <button onclick="showPage('home-page')" style="background:#E5E7EB; color:var(--text)">Back to Shop</button>
         </div>
     </div>
 
-    <!-- 3. USER PROFILE & ORDER HISTORY PAGE -->
+    <!-- 6. USER PROFILE PAGE -->
     <div id="profile-page" class="page">
-        <div class="profile-container">
-            <i data-lucide="user-check" style="margin: 0 auto 10px; color: #10B981;"></i>
-            <h2>Welcome Back!</h2>
-            <p style="margin: 10px 0 20px; font-weight: 500;">Phone: <span id="profile-phone" style="color: var(--primary);"></span></p>
-            
-            <hr style="border:0; border-top:1px solid var(--border); margin-bottom:20px;">
-            <h3 style="text-align: left; margin-bottom: 10px;">Your Orders</h3>
-            <div id="history-list"></div>
-            
-            <button onclick="handleLogout()" style="background:#EF4444; color:white; margin-top: 25px;">Logout</button>
-            <button onclick="showPage('home-page')" style="background:#E5E7EB; color:var(--text)">Back to Shop</button>
-        </div>
-    </div>
-
-    <!-- 4. ORDER SUCCESS PAGE -->
-    <div id="order-success-page" class="page">
-        <div class="success-box">
-            <div class="success-icon">🎉</div>
-            <h2>Order Placed Successfully!</h2>
-            <p style="color: var(--text-muted); margin-bottom: 20px;">Your payment was verified via Razorpay.</p>
-            <div style="background: #F3F4F6; padding: 15px; border-radius: 8px; text-align: left; margin-bottom: 20px; font-size: 14px;">
-                <p style="margin-bottom: 5px;"><strong>Order ID:</strong> <span id="success-order-id"></span></p>
-                <p><strong>Payment ID:</strong> <span id="success-payment-id"></span></p>
+        <div class="profile-card">
+            <div style="background: #EEF2FF; width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 15px auto;">
+                <i data-lucide="user" style="color: var(--primary); width: 30px; height:30px;"></i>
             </div>
-            <button onclick="showPage('home-page')">Continue Shopping</button>
+            <h3 id="profile-phone" style="margin-bottom: 5px;">9999999999</h3>
+            <p style="color: var(--text-muted); font-size: 13px; margin-bottom: 20px;">Logged in via Mobile</p>
+            
+            <hr style="border: 0; border-top: 1px solid var(--border-color); margin-bottom: 20px;">
+            
+            <h4 style="text-align: left; font-size: 14px; font-weight: 700;">Your Order History (COD)</h4>
+            <div id="history-list" style="max-height: 200px; overflow-y: auto; margin-bottom: 20px;">
+                <!-- Order Logs here -->
+            </div>
+
+            <button class="submit-btn" style="background: #EF4444;" onclick="handleLogout()">Logout</button>
         </div>
     </div>
 
-    <!-- --- CART DRAWER OVERLAY --- -->
-    <div id="cart-overlay" class="cart-overlay"></div>
-    <div id="cart-drawer" class="cart-drawer">
-        <div class="cart-header">
-            <h3>Shopping Bag</h3>
-            <button id="close-cart" style="background:none; border:none; cursor:pointer;"><i data-lucide="x"></i></button>
+    <!-- 7. ORDER SUCCESS PAGE -->
+    <div id="order-success-page" class="page" style="text-align: center;">
+        <div style="max-width: 450px; margin: 50px auto; background: white; padding: 40px; border-radius: 12px; border:1px solid var(--border-color);">
+            <div style="background: #D1FAE5; width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px auto;">
+                <i data-lucide="check-circle" style="color: #10B981; width:36px; height:36px;"></i>
+            </div>
+            <h2 style="margin-bottom: 10px;">Order Confirmed!</h2>
+            <p style="color: var(--text-muted); font-size: 14px; margin-bottom: 20px;">Your order has been recorded. Please keep cash ready at delivery time.</p>
+            
+            <div style="background: #F3F4F6; padding: 15px; border-radius: 8px; text-align: left; font-size: 14px; margin-bottom: 25px;">
+                <p style="margin-bottom: 6px;"><strong>Order ID:</strong> <span id="success-order-id">ORD12345</span></p>
+                <p><strong>Payment Mode:</strong> <span id="success-payment-id">COD</span></p>
+            </div>
+
+            <button class="submit-btn" onclick="showPage('home-page')">Continue Shopping</button>
         </div>
-        <div id="cart-items-container"></div>
-        <div class="cart-footer">
-            <div class="total-row">
-                <span>Total:</span>
+    </div>
+
+    <!-- 8. SLIDE-OUT CART DRAWER INTERFACE -->
+    <div class="cart-overlay" id="cart-overlay"></div>
+    <div class="cart-drawer" id="cart-drawer">
+        <div class="cart-header">
+            <h3 style="font-weight: 700; display:flex; align-items:center; gap:8px;">
+                <i data-lucide="shopping-bag" style="color:var(--primary)"></i> Your Bag
+            </h3>
+            <button class="icon-btn" id="close-cart"><i data-lucide="x"></i></button>
+        </div>
+        <div class="cart-items" id="cart-items-container">
+            <!-- Dynamic Cart Items inject here -->
+        </div>
+        <div class="cart-footer" id="checkout-btn-container">
+            <div style="display: flex; justify-content: space-between; font-weight: 700; font-size: 16px;">
+                <span>Total Amount:</span>
                 <span id="cart-total">₹0.00</span>
             </div>
-            <div id="checkout-btn-container">
-                <button class="checkout-btn" onclick="payWithRazorpay()">Pay with Razorpay</button>
-            </div>
+            <button class="checkout-btn" onclick="placeCODOrder()">Place Order (Cash on Delivery)</button>
         </div>
     </div>
 
+    <!-- 9. MOBILE BOTTOM NAVIGATION BAR -->
+    <div class="bottom-nav">
+        <button class="icon-btn" onclick="showPage('home-page')"><i data-lucide="home"></i></button>
+        <button class="icon-btn" onclick="document.getElementById('cart-drawer').classList.add('active'); document.getElementById('cart-overlay').classList.add('active');">
+            <i data-lucide="shopping-bag"></i>
+        </button>
+        <button class="icon-btn" id="mobile-profile-btn" onclick="showPage('auth-page')"><i data-lucide="user"></i></button>
+    </div>
+
+    <!-- Reference Link to App.js Logic -->
+    <script src="app.js"></script>
 </body>
 </html>
