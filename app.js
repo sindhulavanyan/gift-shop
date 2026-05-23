@@ -1,31 +1,31 @@
 const PRODUCTS = [
     { 
         id: 1, 
-        name: "Ceramic Incense Vessel", 
-        category: "Handcrafted Clay",
-        price: 42.00, 
-        image: "https://images.unsplash.com/photo-1612196808214-b8e1d6145a8c?auto=format&fit=crop&w=600&q=80" 
+        name: "LAEON Stainless Steel Tumbler ", 
+        category: "Tumbler",
+        price: 900, 
+        image: "https://static-assets-prod.fnp.com/images/pr/l/v20251028180715/dual-tone-personalised-stainless-steel-tumbler_1.jpg" 
     },
     { 
         id: 2, 
-        name: "Minimalist Brass Pen", 
-        category: "Desk Objects",
-        price: 38.00, 
-        image: "https://images.unsplash.com/photo-1583485088034-697b5bc54ccd?auto=format&fit=crop&w=600&q=80" 
+        name: " LAEON Stainless Steel Flask", 
+        category: "Flask",
+        price:600, 
+        image: "https://www.thewalletstore.in/cdn/shop/products/bottle-02.jpg?v=1668669610&width=800 " 
     },
     { 
         id: 3, 
-        name: "Soy Candle - Amber & Moss", 
-        category: "Home Fragrance",
-        price: 28.00, 
-        image: "https://images.unsplash.com/photo-1603006905003-be475563bc59?auto=format&fit=crop&w=600&q=80" 
+        name: "LAEON  Stainless Stell Flask", 
+        category: "Glass",
+        price: 600, 
+        image: "https://static-assets-prod.fnp.com/images/pr/l/v20230728154424/personalised-led-temperature-bottle_1.jpg" 
     },
     { 
         id: 4, 
-        name: "Waffle Linen Throw", 
-        category: "Textiles",
-        price: 145.00, 
-        image: "https://images.unsplash.com/photo-1600121848594-d8644e57abab?auto=format&fit=crop&w=600&q=80" 
+        name: "LAEON Stainless steel Bottle", 
+        category: "Bottle",
+        price:500, 
+        image: "https://i0.wp.com/unlimitedgifts.in/wp-content/uploads/2024/02/bottle-ok.jpg?fit=1000%2C1000&ssl=1" 
     }
 ];
 
