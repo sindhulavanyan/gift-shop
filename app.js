@@ -32,7 +32,7 @@ document.addEventListener("DOMContentLoaded", () => {
         updateCartUI();
         checkLoginStatus();
         hideSpinner();
-    }, 600); // 0.6 Seconds Loading Spinner Feel
+    }, 600); // 0.6 Seconds Loading Spinner
 });
 
 // --- 4. LOADING SPINNER CONTROLS ---
@@ -150,44 +150,27 @@ function updateCartUI() {
     document.getElementById("checkout-btn-container").style.display = total > 0 ? "block" : "none";
 }
 
-// --- 8. RAZORPAY INTEGRATION ---
-function payWithRazorpay() {
+// --- 8. CASH ON DELIVERY (COD) ORDER PROCESS ---
+function placeCODOrder() {
     if(!userSession) {
         alert("Please Login first using your mobile number to place an order!");
         showPage("auth-page");
         return;
     }
 
-    const total = cart.reduce((acc, item) => acc + (item.price * item.quantity), 0);
+    const deliveryAddress = prompt("Please enter your complete Delivery Address:");
     
-    // Razorpay Standard Integration Configuration
-    var options = {
-        "key": "rzp_test_YOUR_KEY_HERE", // ⚠️ ఇక్కడ మీ Razorpay Test Key ID ని పేస్ట్ చేయండి
-        "amount": total * 100, // Amount in paise (Eg: ₹100 = 10000 paise)
-        "currency": "INR",
-        "name": "LAEON - The Present Gift Shop",
-        "description": "E-Commerce Order Payment",
-        "handler": function (response){
-            processOrderSuccess(response.razorpay_payment_id);
-        },
-        "prefill": {
-            "contact": userSession.phone
-        },
-        "theme": {
-            "color": "#4F46E5"
-        }
-    };
-    
-    var rzp1 = new Razorpay(options);
-    rzp1.open();
-}
+    if(!deliveryAddress || deliveryAddress.trim() === "") {
+        alert("Delivery Address is required to place a Cash on Delivery order!");
+        return;
+    }
 
-// --- 9. ORDER SUCCESS & HISTORY LOGIC ---
-function processOrderSuccess(paymentId) {
     const total = cart.reduce((acc, item) => acc + (item.price * item.quantity), 0);
+    
     const order = {
         orderId: "ORD" + Math.floor(Math.random() * 900000 + 100000),
-        paymentId: paymentId,
+        paymentMethod: "Cash on Delivery",
+        address: deliveryAddress,
         date: new Date().toLocaleDateString(),
         amount: total,
         items: [...cart]
@@ -196,17 +179,19 @@ function processOrderSuccess(paymentId) {
     orderHistory.unshift(order);
     localStorage.setItem('orderHistory', JSON.stringify(orderHistory));
     
-    // Clear Cart
     cart = [];
     saveAndUpdateCart();
 
-    // Success Screen Data Integration
     document.getElementById("success-order-id").innerText = order.orderId;
-    document.getElementById("success-payment-id").innerText = paymentId;
+    document.getElementById("success-payment-id").innerText = "Collect ₹" + total.toFixed(2) + " on Delivery";
+    
+    const successMsg = document.querySelector("#order-success-page p");
+    if(successMsg) successMsg.innerText = "Your order is confirmed! Please keep the cash ready at the time of delivery.";
+
     showPage("order-success-page");
 }
 
-// --- 10. AUTHENTICATION (PHONE NUMBER LOGIN) ---
+// --- 9. AUTHENTICATION (PHONE NUMBER LOGIN) ---
 function handlePhoneLogin(e) {
     e.preventDefault();
     const phone = document.getElementById("phone-input").value;
@@ -224,7 +209,6 @@ function checkLoginStatus() {
     const profileBtn = document.getElementById("nav-profile-btn");
     if(userSession) {
         document.getElementById("profile-phone").innerText = userSession.phone;
-        // If user logged in, redirect user icon button directly to profile screen instead of login page
         profileBtn.setAttribute("onclick", "showPage('profile-page')");
         renderOrderHistory();
     } else {
@@ -251,17 +235,16 @@ function renderOrderHistory() {
         <div class="order-history-card">
             <div style="display:flex; justify-content:space-between; margin-bottom:8px; font-size: 14px;">
                 <strong>ID: ${order.orderId}</strong>
-                <span style="color:#10B981; font-weight:600;">Paid</span>
+                <span style="color:#F59E0B; font-weight:600;">COD</span>
             </div>
             <p style="font-size: 13px; color: var(--text-muted);">Date: ${order.date} | Total: ₹${order.amount.toFixed(2)}</p>
-            <small style="color:var(--text-muted); font-size: 11px; display:block; margin-top: 4px;">Ref Payment ID: ${order.paymentId}</small>
+            <small style="color:var(--text-muted); font-size: 11px; display:block; margin-top: 4px;">Address: ${order.address}</small>
         </div>
     `).join('');
 }
 
-// --- 11. NAVIGATION & SEARCH LISTENERS ---
+// --- 10. NAVIGATION & SEARCH LISTENERS ---
 function setupEventListeners() {
-    // Live Search Feature
     const searchBar = document.getElementById("search-bar");
     if(searchBar) {
         searchBar.addEventListener("input", (e) => {
@@ -270,7 +253,6 @@ function setupEventListeners() {
         });
     }
 
-    // Slide Cart Drawer Control
     const drawer = document.getElementById("cart-drawer");
     const overlay = document.getElementById("cart-overlay");
     
@@ -296,10 +278,8 @@ function showPage(pageId) {
     const targetPage = document.getElementById(pageId);
     if(targetPage) targetPage.classList.add('active');
     
-    // Automate closing cart drawer on navigating pages
     document.getElementById("cart-drawer").classList.remove("active");
     document.getElementById("cart-overlay").classList.remove("active");
     
-    // Scroll smoothly to top
     window.scrollTo({ top: 0, behavior: 'smooth' });
 }
