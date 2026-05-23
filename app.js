@@ -8,14 +8,14 @@ const PRODUCTS = [
     },
     { 
         id: 2, 
-        name: " LAEON Stainless Steel Flask", 
+        name: " LAEON Stainless Steel Flask(Black colour)", 
         category: "Flask",
         price:600, 
         image: "https://www.thewalletstore.in/cdn/shop/products/bottle-02.jpg?v=1668669610&width=800 " 
     },
     { 
         id: 3, 
-        name: "LAEON  Stainless Stell Flask", 
+        name: "LAEON  Stainless Steel Flask(Red & BLUE available)", 
         category: "Glass",
         price: 600, 
         image: "https://static-assets-prod.fnp.com/images/pr/l/v20230728154424/personalised-led-temperature-bottle_1.jpg" 
