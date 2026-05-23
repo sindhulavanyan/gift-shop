@@ -37,6 +37,7 @@ document.addEventListener("DOMContentLoaded", () => {
     setupCartListeners();
 });
 
+// 1. ప్రొడక్ట్స్ డిస్ప్లేలో డాలర్ ($) స్థానంలో రూపాయి (₹) మార్చబడింది
 function renderProducts() {
     const container = document.getElementById("products-container");
     container.innerHTML = PRODUCTS.map(prod => `
@@ -47,7 +48,7 @@ function renderProducts() {
             <div class="product-info">
                 <span class="product-category">${prod.category}</span>
                 <h3>${prod.name}</h3>
-                <p class="product-price">$${prod.price.toFixed(2)}</p>
+                <p class="product-price">₹${prod.price.toFixed(2)}</p>
                 <button class="add-to-cart-btn" onclick="addToCart(${prod.id})">Add to Bag</button>
             </div>
         </div>
@@ -74,6 +75,7 @@ function addToCart(id) {
     document.getElementById("cart-drawer").classList.add("active");
 }
 
+// 2. కార్ట్ లోపల వస్తువుల ధరలు మరియు టోటల్ అమౌంట్ వద్ద రూపాయి (₹) మార్చబడింది
 function updateCartUI() {
     const count = cart.reduce((acc, item) => acc + item.quantity, 0);
     document.getElementById("cart-count").innerText = count;
@@ -87,14 +89,14 @@ function updateCartUI() {
                 <img src="${item.image}" alt="${item.name}">
                 <div class="cart-item-details">
                     <h4>${item.name}</h4>
-                    <p>${item.quantity} × $${item.price.toFixed(2)}</p>
+                    <p>${item.quantity} × ₹${item.price.toFixed(2)}</p>
                 </div>
             </div>
         `).join('');
     }
 
     const total = cart.reduce((acc, item) => acc + (item.price * item.quantity), 0);
-    document.getElementById("cart-total").innerText = `$${total.toFixed(2)}`;
+    document.getElementById("cart-total").innerText = `₹${total.toFixed(2)}`;
 
     const gPayButtonContainer = document.getElementById("google-pay-container");
     gPayButtonContainer.style.display = total > 0 ? "block" : "none";
@@ -159,11 +161,12 @@ function createAndRenderGooglePayButton() {
     document.getElementById('google-pay-container').appendChild(button);
 }
 
+// 3. గూగుల్ పే కోసం కంట్రీ కోడ్ 'IN' కి, కరెన్సీ కోడ్ 'INR' కి మార్చబడింది
 function getTransactionInfo() {
     const total = cart.reduce((acc, item) => acc + (item.price * item.quantity), 0);
     return {
-        countryCode: 'US',
-        currencyCode: 'USD',
+        countryCode: 'IN',
+        currencyCode: 'INR',
         totalPriceStatus: 'FINAL',
         totalPrice: total.toFixed(2)
     };
@@ -192,6 +195,7 @@ function processPaymentSuccess(paymentData) {
     updateCartUI();
     document.getElementById("cart-drawer").classList.remove("active");
 }
+
 window.onload = function() {
     if (typeof onGooglePayLoaded === 'function') {
         onGooglePayLoaded();
