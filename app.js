@@ -1,18 +1,100 @@
 // --- 1. PRODUCTS DATA ---
 const PRODUCTS = [
-    { id: 1, name: "LAEON Stainless Steel Tumbler", category: "Water Bottles", price: 900, image: "https://static-assets-prod.fnp.com/images/pr/l/v20251028180715/dual-tone-personalised-stainless-steel-tumbler_1.jpg" },
-    { id: 2, name: "LAEON Stainless Steel Flask (Black colour)", category: "Water Bottles", price: 600, image: "https://www.thewalletstore.in/cdn/shop/products/bottle-02.jpg?v=1668669610&width=800" },
-    { id: 3, name: "LAEON Stainless Steel Flask (Red & BLUE available)", category: "Water Bottles", price: 600, image: "https://static-assets-prod.fnp.com/images/pr/l/v20230728154424/personalised-led-temperature-bottle_1.jpg" },
-    { id: 4, name: "LAEON Stainless steel Bottle", category: "Water Bottles", price: 500, image: "https://i0.wp.com/unlimitedgifts.in/wp-content/uploads/2024/02/bottle-ok.jpg?fit=1000%2C1000&ssl=1" },
-    { id: 5, name: "Personalized Wooden Photo Frame", category: "Frames", price: 450, image: "https://images.unsplash.com/photo-1513519245088-0e12902e5a38?w=500&q=80" },
-    { id: 6, name: "Collage Memory Photo Frame", category: "Frames", price: 799, image: "https://images.unsplash.com/photo-1544273677-c433136021d4?w=500&q=80" },
-    { id: 7, name: "Luxury Surprise Gift Box", category: "Gifts", price: 1200, image: "https://images.unsplash.com/photo-1549465220-1a8b9238cd48?w=500&q=80" },
-    { id: 8, name: "Customized Ceramic Mug", category: "Gifts", price: 299, image: "https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd?w=500&q=80" },
-    { id: 9, name: "Premium Privacy Tempered Glass", category: "Tempered Glass", price: 250, image: "https://images.unsplash.com/photo-1583394838336-acd977736f90?w=500&q=80" },
-    { id: 10, name: "11D Ultra Clear Screen Guard", category: "Tempered Glass", price: 180, image: "https://images.unsplash.com/photo-1610945265064-0e34e5519bbf?w=500&q=80" },
-    { id: 11, name: "Custom Printed Black Cotton T-Shirt", category: "T-Shirts", price: 499, image: "https://images.unsplash.com/photo-1521572267360-ee0c2909d518?w=500&q=80" },
-    { id: 12, name: "Minimalist Aesthetic White Tee", category: "T-Shirts", price: 449, image: "https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?w=500&q=80" }
+    // --- WATER BOTTLES ---
+    { 
+        id: 1, 
+        name: "LAEON Stainless Steel Tumbler", 
+        category: "Water Bottles",
+        price: 900, 
+        image: "https://static-assets-prod.fnp.com/images/pr/l/v20251028180715/dual-tone-personalised-stainless-steel-tumbler_1.jpg" 
+    },
+    { 
+        id: 2, 
+        name: "LAEON Stainless Steel Flask (Black colour)", 
+        category: "Water Bottles",
+        price: 600, 
+        image: "https://www.thewalletstore.in/cdn/shop/products/bottle-02.jpg?v=1668669610&width=800" 
+    },
+    { 
+        id: 3, 
+        name: "LAEON Stainless Steel Flask (Red & BLUE available)", 
+        category: "Water Bottles",
+        price: 600, 
+        image: "https://static-assets-prod.fnp.com/images/pr/l/v20230728154424/personalised-led-temperature-bottle_1.jpg" 
+    },
+    { 
+        id: 4, 
+        name: "LAEON Stainless steel Bottle", 
+        category: "Water Bottles",
+        price: 500, 
+        image: "https://i0.wp.com/unlimitedgifts.in/wp-content/uploads/2024/02/bottle-ok.jpg?fit=1000%2C1000&ssl=1" 
+    },
+
+    // --- FRAMES ---
+    { 
+        id: 5, 
+        name: "LAEON Mosaic Photo Frame for Wedding Anniversary A4 size", 
+        category: "Frames",
+        price: 699, 
+        image: "https://cdn0.weddingwire.in/article/6134/original/960/jpg/124316-hyperphotoframe.webp" 
+    },
+    { 
+        id: 6, 
+        name: "LAEON Personalised Heart Photo Frame for Wedding Anniversary A4 size", 
+        category: "Frames",
+        price: 699, 
+        image: "https://cdn0.weddingwire.in/article/8134/original/960/jpg/124318-pixmix-pk.webp" 
+    },
+
+    // --- GIFTS ---
+    { 
+        id: 7, 
+        name: "Custom Photo Print on Black mug", 
+        category: "Gifts",
+        price: 450, 
+        image: "https://encrypted-tbn1.gstatic.com/shopping?q=tbn:ANd9GcQ-6VxDngfBvVFPNSQEjehqEfoZx3EXZiMi71shPXYz-XfrYipR16yezTRTN-K2EKqpp9NJna0KP3SsVRyfg9txbz48i5wWmGLlmThsiluy7352U2uy-riE&usqp=CAc" 
+    },
+    { 
+        id: 8, 
+        name: "Customized Ceramic White  Mug", 
+        category: "Gifts",
+        price: 299, 
+        image: "https://coolgenie.in/wp-content/uploads/2025/05/cf8e6c22a686d2aa-6-scaled.webp" 
+    },
+
+    // --- Engraving Gifts ---
+    { 
+        id: 9, 
+        name: " Premium Metal Keychain -Silver Metal Finish ", 
+        category: "Keychain",
+        price: 100, 
+        image: "https://m.media-amazon.com/images/I/81j5rd4u1NL._SX679_.jpg" 
+    },
+    { 
+        id: 10, 
+        name: "Premium Metal Keychain -Gold Metal Finish", 
+        category: "Keychain",
+        price: 250, 
+        image: "https://m.media-amazon.com/images/I/71PC7FcVmeL._SX679_.jpg" 
+    },
+
+    // --- TSHIRTS ---
+    { 
+        id: 11, 
+        name: "Personlaized Custom Printed White Round Neck Polyster T-Shirt", 
+        category: "T-Shirts",
+        price: 450, 
+        image: "https://m.media-amazon.com/images/I/61tQ2ps12xL._AC_UY1100_.jpg" 
+    },
+    { 
+        id: 12, 
+        name: "Personlaized Custom Printed White Collared Neck Polyster T-Shirt", 
+        category: "T-Shirts",
+        price: 550, 
+        image: "https://m.media-amazon.com/images/I/51dpuqLmU0L._SY741_.jpg" 
+    }
 ];
+
 
 // --- 2. STATE MANAGEMENT (LOCAL STORAGE) ---
 let cart = JSON.parse(localStorage.getItem('cart')) || [];
