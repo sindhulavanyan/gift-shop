@@ -1,31 +1,96 @@
 const PRODUCTS = [
+    // --- WATER BOTTLES ---
     { 
         id: 1, 
-        name: "LAEON Stainless Steel Tumbler ", 
-        category: "Tumbler",
+        name: "LAEON Stainless Steel Tumbler", 
+        category: "Water Bottles",
         price: 900, 
         image: "https://static-assets-prod.fnp.com/images/pr/l/v20251028180715/dual-tone-personalised-stainless-steel-tumbler_1.jpg" 
     },
     { 
         id: 2, 
-        name: " LAEON Stainless Steel Flask(Black colour)", 
-        category: "Flask",
-        price:600, 
-        image: "https://www.thewalletstore.in/cdn/shop/products/bottle-02.jpg?v=1668669610&width=800 " 
+        name: "LAEON Stainless Steel Flask (Black colour)", 
+        category: "Water Bottles",
+        price: 600, 
+        image: "https://www.thewalletstore.in/cdn/shop/products/bottle-02.jpg?v=1668669610&width=800" 
     },
     { 
         id: 3, 
-        name: "LAEON  Stainless Steel Flask(Red & BLUE available)", 
-        category: "Glass",
+        name: "LAEON Stainless Steel Flask (Red & BLUE available)", 
+        category: "Water Bottles",
         price: 600, 
         image: "https://static-assets-prod.fnp.com/images/pr/l/v20230728154424/personalised-led-temperature-bottle_1.jpg" 
     },
     { 
         id: 4, 
         name: "LAEON Stainless steel Bottle", 
-        category: "Bottle",
-        price:500, 
+        category: "Water Bottles",
+        price: 500, 
         image: "https://i0.wp.com/unlimitedgifts.in/wp-content/uploads/2024/02/bottle-ok.jpg?fit=1000%2C1000&ssl=1" 
+    },
+
+    // --- FRAMES ---
+    { 
+        id: 5, 
+        name: "LAEON Mosaic Photo Frame for Wedding Anniversary A4 size", 
+        category: "Frames",
+        price: 699, 
+        image: "https://cdn0.weddingwire.in/article/6134/original/960/jpg/124316-hyperphotoframe.webp" 
+    },
+    { 
+        id: 6, 
+        name: "LAEON Personalised Heart Photo Frame for Wedding Anniversary A4 size", 
+        category: "Frames",
+        price: 699, 
+        image: "https://cdn0.weddingwire.in/article/8134/original/960/jpg/124318-pixmix-pk.webp" 
+    },
+
+    // --- GIFTS ---
+    { 
+        id: 7, 
+        name: "Custom Photo Print on Black mug", 
+        category: "Gifts",
+        price: 450, 
+        image: "https://encrypted-tbn1.gstatic.com/shopping?q=tbn:ANd9GcQ-6VxDngfBvVFPNSQEjehqEfoZx3EXZiMi71shPXYz-XfrYipR16yezTRTN-K2EKqpp9NJna0KP3SsVRyfg9txbz48i5wWmGLlmThsiluy7352U2uy-riE&usqp=CAc" 
+    },
+    { 
+        id: 8, 
+        name: "Customized Ceramic White  Mug", 
+        category: "Gifts",
+        price: 299, 
+        image: "https://coolgenie.in/wp-content/uploads/2025/05/cf8e6c22a686d2aa-6-scaled.webp" 
+    },
+
+    // --- Engraving Gifts ---
+    { 
+        id: 9, 
+        name: " Premium Metal Keychain -Silver Metal Finish ", 
+        category: "Keychain",
+        price: 100, 
+        image: "https://m.media-amazon.com/images/I/81j5rd4u1NL._SX679_.jpg" 
+    },
+    { 
+        id: 10, 
+        name: "Premium Metal Keychain -Gold Metal Finish", 
+        category: "Keychain",
+        price: 250, 
+        image: "https://m.media-amazon.com/images/I/71PC7FcVmeL._SX679_.jpg" 
+    },
+
+    // --- TSHIRTS ---
+    { 
+        id: 11, 
+        name: "Personlaized Custom Printed White Round Neck Polyster T-Shirt", 
+        category: "T-Shirts",
+        price: 450, 
+        image: "https://m.media-amazon.com/images/I/61tQ2ps12xL._AC_UY1100_.jpg" 
+    },
+    { 
+        id: 12, 
+        name: "Personlaized Custom Printed White Collared Neck Polyster T-Shirt", 
+        category: "T-Shirts",
+        price: 550, 
+        image: "https://m.media-amazon.com/images/I/51dpuqLmU0L._SY741_.jpg" 
     }
 ];
 
@@ -37,7 +102,6 @@ document.addEventListener("DOMContentLoaded", () => {
     setupCartListeners();
 });
 
-// 1. ప్రొడక్ట్స్ డిస్ప్లేలో డాలర్ ($) స్థానంలో రూపాయి (₹) మార్చబడింది
 function renderProducts() {
     const container = document.getElementById("products-container");
     container.innerHTML = PRODUCTS.map(prod => `
@@ -75,7 +139,6 @@ function addToCart(id) {
     document.getElementById("cart-drawer").classList.add("active");
 }
 
-// 2. కార్ట్ లోపల వస్తువుల ధరలు మరియు టోటల్ అమౌంట్ వద్ద రూపాయి (₹) మార్చబడింది
 function updateCartUI() {
     const count = cart.reduce((acc, item) => acc + item.quantity, 0);
     document.getElementById("cart-count").innerText = count;
@@ -161,7 +224,6 @@ function createAndRenderGooglePayButton() {
     document.getElementById('google-pay-container').appendChild(button);
 }
 
-// 3. గూగుల్ పే కోసం కంట్రీ కోడ్ 'IN' కి, కరెన్సీ కోడ్ 'INR' కి మార్చబడింది
 function getTransactionInfo() {
     const total = cart.reduce((acc, item) => acc + (item.price * item.quantity), 0);
     return {
