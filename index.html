@@ -1,16 +1,57 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-<title>Lavanya Gift Shop</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Curated Gifts | Modern Gift Shop</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
 </head>
+<body>
+    <header class="navbar">
+        <div class="nav-container">
+            <a href="#" class="logo">present<span>.</span></a>
+            <button class="cart-trigger" id="cart-btn" aria-label="Open Cart">
+                <i data-lucide="shopping-bag"></i>
+                <span class="cart-badge" id="cart-count">0</span>
+            </button>
+        </div>
+    </header>
 
-<body style="font-family:Arial;text-align:center;padding:50px;">
+    <section class="hero">
+        <div class="hero-content">
+            <h1>Thoughtful gifts for intentional living.</h1>
+            <p>Carefully curated objects designed to celebrate life's quiet milestones.</p>
+        </div>
+    </section>
 
-<h1>L'AEON Gift Shop 🎁</h1>
+    <main class="storefront">
+        <div class="container">
+            <h2 class="section-title">The Collection</h2>
+            <div class="products-grid" id="products-container"></div>
+        </div>
+    </main>
 
-<p>Welcome to my L'AEON </p>
+    <div class="cart-drawer" id="cart-drawer">
+        <div class="cart-overlay" id="cart-overlay"></div>
+        <div class="cart-content">
+            <div class="cart-header">
+                <h3>Your Bag</h3>
+                <button class="close-btn" id="close-cart"><i data-lucide="x"></i></button>
+            </div>
+            <div class="cart-items" id="cart-items-container"></div>
+            <div class="cart-footer">
+                <div class="summary-line">
+                    <span>Subtotal</span>
+                    <span id="cart-total">$0.00</span>
+                </div>
+                <div id="google-pay-container"></div>
+            </div>
+        </div>
+    </div>
 
-<button>Order Now to get good disounts </button>
-
+    <script async src="https://pay.google.com/gp/p/js/pay.js" onload="onGooglePayLoaded()"></script>
+    <script src="app.js"></script>
 </body>
 </html>
