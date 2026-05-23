@@ -42,13 +42,13 @@ function renderProducts() {
     container.innerHTML = PRODUCTS.map(prod => `
         <div class="product-card">
             <div class="img-container">
-                <img src="₹{prod.image}" alt="₹{prod.name}">
+                <img src="${prod.image}" alt="${prod.name}">
             </div>
             <div class="product-info">
-                <span class="product-category">₹{prod.category}</span>
-                <h3>₹{prod.name}</h3>
-                <p class="product-price">₹{prod.price.toFixed(2)}</p>
-                <button class="add-to-cart-btn" onclick="addToCart(₹{prod.id})">Add to Bag</button>
+                <span class="product-category">${prod.category}</span>
+                <h3>${prod.name}</h3>
+                <p class="product-price">$${prod.price.toFixed(2)}</p>
+                <button class="add-to-cart-btn" onclick="addToCart(${prod.id})">Add to Bag</button>
             </div>
         </div>
     `).join('');
@@ -84,17 +84,17 @@ function updateCartUI() {
     } else {
         itemsContainer.innerHTML = cart.map(item => `
             <div class="cart-item">
-                <img src="₹{item.image}" alt="₹{item.name}">
+                <img src="${item.image}" alt="${item.name}">
                 <div class="cart-item-details">
-                    <h4>₹{item.name}</h4>
-                    <p>₹{item.quantity} × ₹₹{item.price.toFixed(2)}</p>
+                    <h4>${item.name}</h4>
+                    <p>${item.quantity} × $${item.price.toFixed(2)}</p>
                 </div>
             </div>
         `).join('');
     }
 
     const total = cart.reduce((acc, item) => acc + (item.price * item.quantity), 0);
-    document.getElementById("cart-total").innerText = `₹₹{total.toFixed(2)}`;
+    document.getElementById("cart-total").innerText = `$${total.toFixed(2)}`;
 
     const gPayButtonContainer = document.getElementById("google-pay-container");
     gPayButtonContainer.style.display = total > 0 ? "block" : "none";
