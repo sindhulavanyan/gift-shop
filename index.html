@@ -3,55 +3,206 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Curated Gifts | Modern Gift Shop</title>
-    <link rel="stylesheet" href="style.css">
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <title>LAEON - The Present Gift Shop</title>
+    <!-- Google Fonts & Tailwind (Optional for layouts) -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Razorpay Checkout SDK -->
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+    <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
+    
+    <style>
+        :root {
+            --primary: #4F46E5;
+            --primary-hover: #4338CA;
+            --bg: #F9FAFB;
+            --text: #111827;
+            --text-muted: #6B7280;
+            --border: #E5E7EB;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+        body { background-color: var(--bg); color: var(--text); }
+
+        /* Loading Spinner */
+        .spinner-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #ffffff; display: flex; justify-content: center; align-items: center; z-index: 9999; transition: opacity 0.3s; }
+        .spinner { width: 45px; height: 45px; border: 4px solid var(--border); border-top: 4px solid var(--primary); border-radius: 50%; animation: spin 0.8s linear infinite; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+        /* Navigation Header */
+        header { background: white; border-bottom: 1px solid var(--border); sticky; top: 0; z-index: 100; position: sticky; }
+        .nav-container { max-width: 1200px; margin: 0 auto; padding: 15px 20px; display: flex; align-items: center; justify-content: space-between; gap: 20px; }
+        .logo { font-size: 24px; font-weight: 700; color: var(--primary); text-decoration: none; cursor: pointer; }
+        
+        .search-wrapper { flex: 1; max-width: 500px; position: relative; }
+        .search-wrapper input { width: 100%; padding: 10px 15px; border: 1px solid var(--border); border-radius: 8px; font-size: 14px; outline: none; }
+        .search-wrapper input:focus { border-color: var(--primary); }
+
+        .nav-actions { display: flex; align-items: center; gap: 15px; }
+        .nav-btn { background: none; border: none; cursor: pointer; position: relative; padding: 8px; color: var(--text); }
+        .badge { position: absolute; top: 0; right: 0; background: red; color: white; font-size: 10px; width: 18px; height: 18px; border-radius: 50%; display: flex; align-items: center; justify-content: center; }
+
+        /* Category Menu */
+        .categories-bar { background: white; border-bottom: 1px solid var(--border); overflow-x: auto; white-space: nowrap; }
+        .categories-container { max-width: 1200px; margin: 0 auto; padding: 10px 20px; display: flex; gap: 10px; }
+        .category-btn { background: #F3F4F6; border: none; padding: 8px 16px; border-radius: 20px; font-size: 13px; font-weight: 500; cursor: pointer; color: var(--text-muted); }
+        .category-btn.active { background: var(--primary); color: white; }
+
+        /* Content Pages */
+        .page { display: none; max-width: 1200px; margin: 30px auto; padding: 0 20px; }
+        .page.active { display: block; }
+
+        /* Products Grid */
+        .products-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 30px; }
+        .product-card { background: white; border: 1px solid var(--border); border-radius: 12px; overflow: hidden; transition: transform 0.2s; }
+        .product-card:hover { transform: translateY(-4px); }
+        .img-container { height: 250px; background: #f3f3f3; overflow: hidden; }
+        .img-container img { width: 100%; height: 100%; object-fit: cover; }
+        .product-info { padding: 20px; }
+        .product-category { font-size: 12px; color: var(--text-muted); text-transform: uppercase; font-weight: 600; }
+        .product-info h3 { font-size: 16px; margin: 5px 0 10px; font-weight: 600; }
+        .product-price { font-size: 18px; font-weight: 700; color: var(--primary); }
+        .add-to-cart-btn { width: 100%; background: var(--primary); color: white; border: none; padding: 12px; border-radius: 8px; font-weight: 600; margin-top: 15px; cursor: pointer; }
+        .add-to-cart-btn:hover { background: var(--primary-hover); }
+
+        /* Cart Drawer */
+        .cart-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); opacity: 0; pointer-events: none; transition: opacity 0.3s; z-index: 1000; }
+        .cart-overlay.active { opacity: 1; pointer-events: auto; }
+        .cart-drawer { position: fixed; top: 0; right: -400px; width: 100%; max-width: 400px; height: 100%; background: white; box-shadow: -5px 0 15px rgba(0,0,0,0.1); transition: right 0.3s; z-index: 1001; display: flex; flex-direction: column; }
+        .cart-drawer.active { right: 0; }
+        .cart-header { padding: 20px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
+        #cart-items-container { flex: 1; overflow-y: auto; padding: 20px; }
+        .cart-item { display: flex; gap: 15px; margin-bottom: 20px; border-bottom: 1px solid var(--border); padding-bottom: 15px; }
+        .cart-item img { width: 70px; height: 70px; object-fit: cover; border-radius: 8px; }
+        .cart-item-details { flex: 1; }
+        .cart-item-details h4 { font-size: 14px; font-weight: 600; margin-bottom: 5px; }
+        .qty-controls { display: flex; align-items: center; gap: 12px; margin-top: 8px; }
+        .qty-controls button { background: #E5E7EB; border: none; width: 28px; height: 28px; border-radius: 6px; font-weight: bold; cursor: pointer; }
+        .cart-footer { padding: 20px; border-top: 1px solid var(--border); background: #F9FAFB; }
+        .total-row { display: flex; justify-content: space-between; font-size: 18px; font-weight: 700; margin-bottom: 15px; }
+        .checkout-btn { width: 100%; background: #10B981; color: white; border: none; padding: 14px; border-radius: 8px; font-weight: 600; cursor: pointer; font-size: 16px; }
+
+        /* Auth & Profile Styling */
+        .auth-box, .profile-container, .success-box { background: white; padding: 40px; border-radius: 16px; border: 1px solid var(--border); max-width: 450px; margin: 50px auto; text-align: center; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
+        .auth-box input { width: 100%; padding: 12px; border: 1px solid var(--border); border-radius: 8px; margin: 20px 0; font-size: 16px; text-align: center; }
+        .auth-box button, .profile-container button, .success-box button { width: 100%; padding: 12px; border: none; background: var(--primary); color: white; font-weight: 600; border-radius: 8px; cursor: pointer; margin-bottom: 10px; }
+        
+        .order-history-card { background: #F9FAFB; border: 1px solid var(--border); border-radius: 8px; padding: 15px; margin-top: 15px; text-align: left; }
+        .success-icon { font-size: 48px; color: #10B981; margin-bottom: 15px; }
+
+        /* Mobile Responsive */
+        @media (max-width: 768px) {
+            .nav-container { flex-wrap: wrap; padding: 10px; gap: 10px; }
+            .search-wrapper { order: 3; max-width: 100%; width: 100%; }
+            .products-grid { grid-template-columns: repeat(2, 1fr); gap: 15px; }
+            .img-container { height: 160px; }
+            .product-info { padding: 10px; }
+            .product-info h3 { font-size: 14px; }
+        }
+    </style>
 </head>
 <body>
-    <header class="navbar">
+
+    <!-- LOADING SPINNER -->
+    <div id="loader" class="spinner-overlay">
+        <div class="spinner"></div>
+    </div>
+
+    <!-- HEADER / NAVBAR -->
+    <header>
         <div class="nav-container">
-            <a href="#" class="logo">LAEON <span>.</span></a>
-            <button class="cart-trigger" id="cart-btn" aria-label="Open Cart">
-                <i data-lucide="shopping-bag"></i>
-                <span class="cart-badge" id="cart-count">0</span>
-            </button>
+            <div class="logo" onclick="showPage('home-page')">LAEON</div>
+            
+            <div class="search-wrapper">
+                <input type="text" id="search-bar" placeholder="Search bottles, frames, t-shirts...">
+            </div>
+            
+            <div class="nav-actions">
+                <button class="nav-btn" onclick="showPage('auth-page')" id="nav-profile-btn">
+                    <i data-lucide="user"></i>
+                </button>
+                <button class="nav-btn" id="cart-btn">
+                    <i data-lucide="shopping-bag"></i>
+                    <span id="cart-count" class="badge">0</span>
+                </button>
+            </div>
         </div>
     </header>
 
-    <section class="hero">
-        <div class="hero-content">
-            <h1>Welcome to LAEON Gifts, Thoughtful gifts for intentional living.</h1>
-            <p>Carefully curated objects designed to celebrate life's quiet milestones.</p>
-        </div>
-    </section>
+    <!-- CATEGORIES MENU BAR -->
+    <div class="categories-bar">
+        <div id="categories-menu" class="categories-container"></div>
+    </div>
 
-    <main class="storefront">
-        <div class="container">
-            <h2 class="section-title">The Collection</h2>
-            <div class="products-grid" id="products-container"></div>
-        </div>
-    </main>
+    <!-- --- PAGES CONTROL --- -->
 
-    <div class="cart-drawer" id="cart-drawer">
-        <div class="cart-overlay" id="cart-overlay"></div>
-        <div class="cart-content">
-            <div class="cart-header">
-                <h3>Your Bag</h3>
-                <button class="close-btn" id="close-cart"><i data-lucide="x"></i></button>
+    <!-- 1. HOME PAGE (PRODUCTS DISPLAY) -->
+    <div id="home-page" class="page active">
+        <div id="products-container" class="products-grid"></div>
+    </div>
+
+    <!-- 2. LOGIN / SIGNUP PAGE -->
+    <div id="auth-page" class="page">
+        <div class="auth-box">
+            <i data-lucide="lock" style="margin: 0 auto 10px; color: var(--primary);"></i>
+            <h2>Login / Signup</h2>
+            <p style="color: var(--text-muted); font-size: 14px; margin-top: 5px;">Enter your mobile number to connect</p>
+            <form onsubmit="handlePhoneLogin(event)">
+                <input type="tel" id="phone-input" placeholder="10 Digit Phone Number" required maxlength="10" pattern="[0-9]{10}">
+                <button type="submit">Verify & Log In</button>
+            </form>
+            <button onclick="showPage('home-page')" style="background:#E5E7EB; color:var(--text)">Back to Shop</button>
+        </div>
+    </div>
+
+    <!-- 3. USER PROFILE & ORDER HISTORY PAGE -->
+    <div id="profile-page" class="page">
+        <div class="profile-container">
+            <i data-lucide="user-check" style="margin: 0 auto 10px; color: #10B981;"></i>
+            <h2>Welcome Back!</h2>
+            <p style="margin: 10px 0 20px; font-weight: 500;">Phone: <span id="profile-phone" style="color: var(--primary);"></span></p>
+            
+            <hr style="border:0; border-top:1px solid var(--border); margin-bottom:20px;">
+            <h3 style="text-align: left; margin-bottom: 10px;">Your Orders</h3>
+            <div id="history-list"></div>
+            
+            <button onclick="handleLogout()" style="background:#EF4444; color:white; margin-top: 25px;">Logout</button>
+            <button onclick="showPage('home-page')" style="background:#E5E7EB; color:var(--text)">Back to Shop</button>
+        </div>
+    </div>
+
+    <!-- 4. ORDER SUCCESS PAGE -->
+    <div id="order-success-page" class="page">
+        <div class="success-box">
+            <div class="success-icon">🎉</div>
+            <h2>Order Placed Successfully!</h2>
+            <p style="color: var(--text-muted); margin-bottom: 20px;">Your payment was verified via Razorpay.</p>
+            <div style="background: #F3F4F6; padding: 15px; border-radius: 8px; text-align: left; margin-bottom: 20px; font-size: 14px;">
+                <p style="margin-bottom: 5px;"><strong>Order ID:</strong> <span id="success-order-id"></span></p>
+                <p><strong>Payment ID:</strong> <span id="success-payment-id"></span></p>
             </div>
-            <div class="cart-items" id="cart-items-container"></div>
-            <div class="cart-footer">
-                <div class="summary-line">
-                    <span>Subtotal</span>
-                    <span id="cart-total">$0.00</span>
-                </div>
-                <div id="google-pay-container"></div>
+            <button onclick="showPage('home-page')">Continue Shopping</button>
+        </div>
+    </div>
+
+    <!-- --- CART DRAWER OVERLAY --- -->
+    <div id="cart-overlay" class="cart-overlay"></div>
+    <div id="cart-drawer" class="cart-drawer">
+        <div class="cart-header">
+            <h3>Shopping Bag</h3>
+            <button id="close-cart" style="background:none; border:none; cursor:pointer;"><i data-lucide="x"></i></button>
+        </div>
+        <div id="cart-items-container"></div>
+        <div class="cart-footer">
+            <div class="total-row">
+                <span>Total:</span>
+                <span id="cart-total">₹0.00</span>
+            </div>
+            <div id="checkout-btn-container">
+                <button class="checkout-btn" onclick="payWithRazorpay()">Pay with Razorpay</button>
             </div>
         </div>
     </div>
 
-    <script async src="https://pay.google.com/gp/p/js/pay.js"></script>
-    <script src="app.js"></script>
 </body>
 </html>
